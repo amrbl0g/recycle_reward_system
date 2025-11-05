@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recycle Rewards - Auth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 relative">
+    <div class="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-sky-200/40 to-transparent blur-3xl"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white/80 backdrop-blur border border-white/50 shadow-xl rounded-2xl p-6 md:p-8">
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 flex items-center justify-center text-white font-bold">R</div>
+                <h1 class="text-2xl font-semibold">Recycle Rewards</h1>
+            </div>
+
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button id="tab-login" class="w-1/2 py-2 text-center font-medium rounded-md bg-white shadow text-sky-700">Login</button>
+                <button id="tab-signup" class="w-1/2 py-2 text-center font-medium text-gray-600">Signup</button>
+            </div>
+
+            <form id="form-login" method="post" action="/login" class="space-y-4">
+                {% if login_error %}
+                <div class="rounded-lg border border-red-200 bg-red-50 text-red-700 px-3 py-2 text-sm">
+                    {{ login_error }}
+                </div>
+                {% endif %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">UserID (9 digits)</label>
+                    <input name="user_id" type="text" inputmode="numeric" pattern="\d{9}" title="Exactly 9 digits" placeholder="Enter your 9-digit userID" required maxlength="9" minlength="9" class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
+                </div>
+                <button class="w-full py-2.5 bg-gradient-to-r from-sky-600 to-emerald-600 text-white rounded-xl shadow hover:from-sky-700 hover:to-emerald-700">Login</button>
+            </form>
+
+            <form id="form-signup" method="post" action="/signup" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                    <input name="name" placeholder="Enter your name" required class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">UserID (9 digits)</label>
+                    <input name="user_id" type="text" inputmode="numeric" pattern="\d{9}" title="Exactly 9 digits" placeholder="Choose a 9-digit userID" required maxlength="9" minlength="9" class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
+                </div>
+                <button class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-sky-600 text-white rounded-xl shadow hover:from-emerald-700 hover:to-sky-700">Create Account</button>
+            </form>
+
+            <p class="text-xs text-gray-500 mt-5 text-center">Your userID acts like a password. Keep it safe.</p>
+        </div>
+    </div>
+
+    <script>
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const formLogin = document.getElementById('form-login');
+        const formSignup = document.getElementById('form-signup');
+
+        function activate(tab) {
+            if (tab === 'login') {
+                tabLogin.classList.add('bg-white','shadow','text-sky-700');
+                tabSignup.classList.remove('bg-white','shadow','text-sky-700');
+                tabSignup.classList.add('text-gray-600');
+                formLogin.classList.remove('hidden');
+                formSignup.classList.add('hidden');
+            } else {
+                tabSignup.classList.add('bg-white','shadow','text-sky-700');
+                tabLogin.classList.remove('bg-white','shadow','text-sky-700');
+                tabLogin.classList.add('text-gray-600');
+                formSignup.classList.remove('hidden');
+                formLogin.classList.add('hidden');
+            }
+        }
+
+        tabLogin.addEventListener('click', () => activate('login'));
+        tabSignup.addEventListener('click', () => activate('signup'));
+
+        // Set initial tab if provided from server
+        const initialTab = '{{ active_tab or "login" }}';
+        activate(initialTab);
+    </script>
+</body>
+</html>
+
+

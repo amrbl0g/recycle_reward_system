@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.dist-info/
+.python-version
+
+# Environments
+venv/
+.env
+.env.*
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Build / Dist
+build/
+dist/
+*.spec
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SQLite databases
+*.sqlite3
+recycle.db
+
+# Logs
+*.log
+
