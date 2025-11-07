@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from fastapi import FastAPI, Request, Depends, Form, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -85,13 +85,38 @@ def auth_page(request: Request):
     return templates.TemplateResponse("auth.html", {"request": request})
 
 
+@app.get("/generate_204")
+def android_captive_portal_check():
+    return RedirectResponse(url="/", status_code=302)
+
+
+@app.get("/.well-known/portal.html")
+@app.get("/hotspot-detect.html")
+def apple_captive_portal_check():
+    return RedirectResponse(url="/", status_code=302)
+
+
+@app.get("/ncsi.txt")
+@app.get("/connecttest.txt")
+def windows_captive_portal_check():
+    return RedirectResponse(url="/", status_code=302)
+
+
 @app.post("/signup")
 def signup(request: Request, name: str = Form(...), user_id: str = Form(...), db: Session = Depends(get_db_session)):
     if not (user_id.isdigit() and len(user_id) == 9):
-        raise HTTPException(status_code=400, detail="userID must be exactly 9 digits")
+        return templates.TemplateResponse(
+            "auth.html",
+            {"request": request, "signup_error": "Invalid userID. Please enter exactly 9 digits.", "active_tab": "signup", "signup_name": name, "signup_user_id": user_id},
+            status_code=400,
+        )
     existing = db.exec(select(User).where(User.user_id == user_id)).first()
     if existing:
-        raise HTTPException(status_code=400, detail="userID already exists")
+        return templates.TemplateResponse(
+            "auth.html",
+            {"request": request, "signup_error": "UserID already exists. Please choose a different userID or login.", "active_tab": "signup", "signup_name": name, "signup_user_id": user_id},
+            status_code=400,
+        )
     user = User(name=name.strip(), user_id=user_id)
     db.add(user)
     db.commit()

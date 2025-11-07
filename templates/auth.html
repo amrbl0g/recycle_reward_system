@@ -34,13 +34,18 @@
             </form>
 
             <form id="form-signup" method="post" action="/signup" class="space-y-4 hidden">
+                {% if signup_error %}
+                <div class="rounded-lg border border-red-200 bg-red-50 text-red-700 px-3 py-2 text-sm">
+                    {{ signup_error }}
+                </div>
+                {% endif %}
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Name</label>
-                    <input name="name" placeholder="Enter your name" required class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
+                    <input name="name" value="{{ signup_name or '' }}" placeholder="Enter your name" required class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">UserID (9 digits)</label>
-                    <input name="user_id" type="text" inputmode="numeric" pattern="\d{9}" title="Exactly 9 digits" placeholder="Choose a 9-digit userID" required maxlength="9" minlength="9" class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
+                    <input name="user_id" type="text" inputmode="numeric" pattern="\d{9}" title="Exactly 9 digits" value="{{ signup_user_id or '' }}" placeholder="Choose a 9-digit userID" required maxlength="9" minlength="9" class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-sky-500 focus:ring-sky-500 px-3 py-2" />
                 </div>
                 <button class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-sky-600 text-white rounded-xl shadow hover:from-emerald-700 hover:to-sky-700">Create Account</button>
             </form>
