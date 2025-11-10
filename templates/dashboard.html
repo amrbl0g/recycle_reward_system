@@ -4,63 +4,88 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Recycle Rewards</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css" />
 </head>
-<body class="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50">
-    <header class="bg-white/80 backdrop-blur border-b border-white/60">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 flex items-center justify-center text-white text-sm font-bold">R</div>
-                <h1 class="text-lg font-semibold">Recycle Rewards</h1>
+<body class="min-h-screen">
+    <header class="header">
+        <div class="container px-4 py-4 flex-between">
+            <div class="flex items-center gap-3">
+                <div class="logo logo-sm">R</div>
+                <h1 class="text-lg font-semibold text-gray-900">Recycle Rewards</h1>
             </div>
-            <a href="/logout" class="text-sm text-red-600 hover:text-red-700">Logout</a>
+            <a href="/logout" class="link-red">Logout</a>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <main class="container px-4 py-8 space-y-8 bg-gray-50 min-h-screen">
         <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white/80 backdrop-blur border border-white/60 rounded-2xl shadow p-5">
-                <h2 class="text-xs uppercase tracking-wide text-gray-500">User</h2>
-                <p class="text-xl font-semibold mt-1">{{ user.name }}</p>
-                <p class="text-sm text-gray-600 mt-1">UserID: <span class="font-mono">{{ user.user_id }}</span></p>
+            <div class="card">
+                <h2 class="text-xs uppercase tracking-wide text-gray-500 mb-3">User</h2>
+                <p class="text-xl font-semibold text-gray-900 mb-1">{{ user.name }}</p>
+                <p class="text-sm text-gray-600">UserID: <span class="font-mono">{{ user.user_id }}</span></p>
             </div>
-            <div class="bg-white/80 backdrop-blur border border-white/60 rounded-2xl shadow p-5">
-                <h2 class="text-xs uppercase tracking-wide text-gray-500">Points</h2>
-                <p class="mt-2 text-4xl font-extrabold bg-gradient-to-r from-sky-600 to-emerald-600 bg-clip-text text-transparent">{{ user.points }}</p>
+            <div class="card">
+                <h2 class="text-xs uppercase tracking-wide text-gray-500 mb-3">Points</h2>
+                <p class="text-4xl font-extrabold text-primary">{{ user.points }}</p>
             </div>
-            <div class="bg-white/80 backdrop-blur border border-white/60 rounded-2xl shadow p-5">
-                <h2 class="text-xs uppercase tracking-wide text-gray-500">Rank</h2>
-                <p class="mt-1 text-lg">Your rank: <span class="font-semibold">#{{ user_rank }}</span></p>
-                <div class="mt-3">
-                    <h3 class="text-xs text-gray-500 mb-1">Top 3</h3>
-                    <ol class="list-decimal list-inside text-sm space-y-0.5">
+            <div class="card rank-card">
+                <div class="rank-header">
+                    <h2 class="text-xs uppercase tracking-wide text-gray-500 mb-4">Your Rank</h2>
+                    <div class="rank-number">
+                        <span class="rank-hash">#</span>
+                        <span class="rank-value">{{ user_rank }}</span>
+                    </div>
+                </div>
+                <div class="leaderboard-section">
+                    <h3 class="leaderboard-title">
+                        <span class="trophy-icon">🏆</span>
+                        Top Leaders
+                    </h3>
+                    <div class="leaderboard-list">
                         {% for u in top_three %}
-                        <li class="flex justify-between"><span>{{ u.name }}</span><span class="text-gray-600">{{ u.points }} pts</span></li>
+                        {% set rank_loop = loop.index %}
+                        <div class="leaderboard-item {% if rank_loop == 1 %}rank-gold{% elif rank_loop == 2 %}rank-silver{% elif rank_loop == 3 %}rank-bronze{% endif %}">
+                            <div class="leaderboard-rank">
+                                {% if rank_loop == 1 %}
+                                <span class="medal">🥇</span>
+                                {% elif rank_loop == 2 %}
+                                <span class="medal">🥈</span>
+                                {% elif rank_loop == 3 %}
+                                <span class="medal">🥉</span>
+                                {% endif %}
+                                <span class="rank-position">{{ rank_loop }}</span>
+                            </div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">{{ u.name }}</div>
+                                <div class="leaderboard-points">{{ u.points }} pts</div>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </ol>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <div class="bg-white/80 backdrop-blur border border-white/60 rounded-2xl shadow p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold">Shop</h2>
-                        <span class="text-sm text-gray-500">Your points: <span class="font-semibold text-sky-700">{{ user.points }}</span></span>
+                <div class="card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900">Shop</h2>
+                        <span class="text-sm text-gray-600">Your points: <span class="font-semibold text-primary">{{ user.points }}</span></span>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {% for item in items %}
                         {% set can_buy = user.points >= item.price_points %}
-                        <form method="post" action="/buy" class="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                        <form method="post" action="/buy" class="card-shop-item">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="font-medium">{{ item.name }}</p>
-                                    <p class="text-sm text-gray-600">{{ item.price_points }} pts</p>
+                                    <p class="font-medium text-gray-900">{{ item.name }}</p>
+                                    <p class="text-sm text-gray-600 mt-0.5">{{ item.price_points }} pts</p>
                                 </div>
                                 <input type="hidden" name="item_name" value="{{ item.name }}" />
                                 <button
-                                    class="px-3 py-1.5 rounded-lg text-sm transition {{ 'bg-sky-600 text-white hover:bg-sky-700' if can_buy else 'bg-gray-200 text-gray-500 cursor-not-allowed' }}"
+                                    type="submit"
+                                    class="btn-secondary {{ 'btn-buy' if can_buy else 'btn-disabled' }}"
                                     {% if not can_buy %}disabled aria-disabled="true" title="Not enough points"{% endif %}
                                 >Buy</button>
                             </div>
@@ -71,51 +96,54 @@
             </div>
 
             <div>
-                <div class="bg-white/80 backdrop-blur border border-white/60 rounded-2xl shadow p-5">
-                    <h2 class="text-lg font-semibold mb-4">Recycle</h2>
+                <div class="card">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Recycle</h2>
                     <form method="post" action="/recycle" class="flex gap-3 items-end">
                         <div class="flex-1">
-                            <label class="block text-sm font-medium text-gray-700">Add points</label>
-                            <input name="points" type="number" min="1" step="1" placeholder="Enter points" required class="mt-1 w-full rounded-xl border-2 border-gray-100 focus:border-emerald-600 focus:ring-emerald-600 px-3 py-2" />
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Add points</label>
+                            <input name="points" type="number" min="1" step="1" placeholder="Enter points" required />
                         </div>
-                        <button class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-sky-600 text-white rounded-xl shadow hover:from-emerald-700 hover:to-sky-700">Add</button>
+                        <button type="submit" class="btn-primary">Add</button>
                     </form>
-                    <p class="text-xs text-gray-500 mt-2">Simulate recycling by adding earned points.</p>
+                    <p class="text-xs text-gray-500 mt-3">Simulate recycling by adding earned points.</p>
                 </div>
             </div>
         </section>
 
-        <section class="bg-white/80 backdrop-blur border border-white/60 rounded-2xl shadow p-5">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold">Transactions</h2>
-                <span class="text-xs text-gray-500">Recent activity</span>
+        <section class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold text-gray-900">Transactions</h2>
+                <span class="text-xs text-gray-500 uppercase tracking-wide">Recent activity</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead>
-                        <tr class="text-left text-gray-600">
-                            <th class="py-2">Date</th>
-                            <th class="py-2">Type</th>
-                            <th class="py-2">Item</th>
-                            <th class="py-2">Points</th>
+                        <tr class="text-left">
+                            <th class="py-3 text-gray-500 font-medium">Date</th>
+                            <th class="py-3 text-gray-500 font-medium">Type</th>
+                            <th class="py-3 text-gray-500 font-medium">Item</th>
+                            <th class="py-3 text-gray-500 font-medium">Points</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for t in transactions %}
-                        <tr class="border-t border-gray-100">
-                            <td class="py-2 text-gray-700">{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                            <td class="py-2">
+                        <tr>
+                            <td class="py-3">
+                                <div class="text-gray-900 font-medium">{{ t.created_at.strftime('%b %d, %Y') }}</div>
+                                <div class="text-gray-500 text-xs mt-0.5">{{ t.created_at.strftime('%I:%M %p') }}</div>
+                            </td>
+                            <td class="py-3">
                                 {% if t.type == 'buy' %}
-                                <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700">Buy</span>
+                                <span class="badge badge-sky">Buy</span>
                                 {% else %}
-                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Recycle</span>
+                                <span class="badge badge-emerald">Recycle</span>
                                 {% endif %}
                             </td>
-                            <td class="py-2">{{ t.item_name or '-' }}</td>
-                            <td class="py-2 font-medium {{ 'text-red-600' if t.points_change < 0 else 'text-emerald-700' }}">{{ t.points_change }}</td>
+                            <td class="py-3 text-gray-700">{{ t.item_name or '-' }}</td>
+                            <td class="py-3 font-medium {{ 'text-red-600' if t.points_change < 0 else 'text-green-600' }}">{{ '+' if t.points_change > 0 else '' }}{{ t.points_change }}</td>
                         </tr>
                         {% else %}
-                        <tr><td class="py-4 text-gray-500" colspan="4">No transactions yet.</td></tr>
+                        <tr><td class="py-8 text-center text-gray-500" colspan="4">No transactions yet.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>

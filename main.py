@@ -58,6 +58,7 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="super-secret-session-key-change-me")
 
 # Static and templates
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
